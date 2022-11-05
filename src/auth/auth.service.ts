@@ -22,7 +22,12 @@ export class AuthService {
             const isPasswordRight = await verify(user.password, loginUserDto.password);
             if (!isPasswordRight) throw new ForbiddenException('Wrong password.');
             const payload: JwtPayload = { sub: user.id }
-            return { access_token: this.jwtService.sign(payload) }
+            return {
+                access_token: this.jwtService.sign(payload, {
+                    secret: process.env.JWT_SECRET,
+                    expiresIn: '1d'
+                })
+            }
         } catch (error) {
             throw error;
         }

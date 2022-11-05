@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -18,13 +17,17 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get()
-  findAll(@Query() query: FindUsersQuery) {
-    return this.usersService.findAll(query);
+  async findAll(@Query() query: FindUsersQuery) {
+    const users = await this.usersService.findAll(query);
+    users.forEach(user => delete user.password);
+    return users;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Get('single-user/:id')
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersService.findOne(id);
+    delete user.password;
+    return user;
   }
 
   @UseGuards(JwtAuthGuard)
