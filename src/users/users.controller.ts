@@ -37,13 +37,15 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@CurrentUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @Patch()
+  async update(@CurrentUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(id, updateUserDto);
+    delete user.password;
+    return user;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
+  @Delete()
   remove(@CurrentUser('id') id: string) {
     return this.usersService.remove(id);
   }
