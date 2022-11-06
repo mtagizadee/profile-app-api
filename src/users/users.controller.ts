@@ -19,6 +19,7 @@ export class UsersController {
   @Get()
   async findAll(@Query() query: FindUsersQuery) {
     const users = await this.usersService.findAll(query);
+
     users.forEach(user => delete user.password);
     return users;
   }
@@ -26,6 +27,7 @@ export class UsersController {
   @Get('single-user/:id')
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
+
     delete user.password;
     return user;
   }
@@ -40,6 +42,7 @@ export class UsersController {
   @Patch()
   async update(@CurrentUser('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(id, updateUserDto);
+
     delete user.password;
     return user;
   }
