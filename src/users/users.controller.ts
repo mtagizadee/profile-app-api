@@ -49,7 +49,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  remove(@CurrentUser('id') id: string) {
-    return this.usersService.remove(id);
+  remove(@CurrentUser() user: User) {
+    return this.usersService.remove(user);
   }
 }

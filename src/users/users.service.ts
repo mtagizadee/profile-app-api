@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { v4 } from 'uuid';
 import { FindUsersQuery } from './users.controller';
+import { deleteImage } from 'src/helpers';
 
 @Injectable()
 export class UsersService {
@@ -58,9 +59,11 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
-    const deleteResult = await this.usersRepository.delete({ id });
+  async remove(user: User) {
+    const deleteResult = await this.usersRepository.delete({ id: user.id });
     if (!deleteResult || deleteResult.affected == 0) throw new BadRequestException('Could not delete a user.');
+
+    user.images.forEach(image => deleteImage(image.url));
     return { message: 'Successfully deleted a user.' };
   }
 }
